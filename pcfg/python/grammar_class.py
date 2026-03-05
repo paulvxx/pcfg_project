@@ -1,5 +1,18 @@
 from dataclasses import dataclass
 
+"""
+This Python program keeps track of an Internal Representation of 
+an arbitrary probablistic context free grammar using a decorator 
+and basic class internal methods
+(i.e. _str_, )
+"""
+
+# Type aliases to store a Production Rule
+# consisting of an ordered pair of a sequence of strings (terminals/non-terminals)
+# and a designated probability assigned to that rule
+ProductionSequence = tuple[str, ...] # allows tuples of any length
+Rule = tuple[ProductionSequence, float]
+
 @dataclass
 class PCFG():
     """
@@ -36,11 +49,17 @@ class PCFG():
         A dictionary with keys as non-terminal symbols and values consist of a set of
         ordered pairs dictating all possible production rules for a single non-terminal
         symbol. For example,  A --> "ab"A (0.25) | "bc"A"c" (0.75) would be stored as:
-        rules["A"] = set({(("a", "b", "A"), 0.25), (("b", "c", "A", "c"), )})
+        rules["A"] = set( {(("a", "b", "A"), 0.25), (("b", "c", "A", "c"), 0.75)} )
         Note: All probabilities should sum to one, given some tolerance level.
         - ** epsilon : A tolerance window for determining if all production rule probabilities
         for a given non-terminal symbol sum to 1 +- epsilon. for example, if epsilon is 0.001, then
         A --> "ab"A (0.355) | "bc"A"c" (0.254) | "bb"A (0.35), then the probabilities sum to 0.999, 
         which is in the tolerable range 1 +- 0.001. 
     """
-    
+
+    non_terminals: set[str]
+    starting_symbol: str
+    terminals: set[str]
+    rules: dict[str, set[Rule]]
+    epsilon: float
+
