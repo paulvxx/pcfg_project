@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from types import MappingProxyType
 
 """
 This Python program keeps track of an Internal Representation of 
@@ -22,10 +23,10 @@ class ProductionRule:
 
     def __post_init__(self):
         # Check that the probability is non-zero but not greater than one
-        if (self.prob < 0) or (self.prob >= 1):
+        if (self.prob <= 0) or (self.prob >= 1):
             raise ValueError("Error: Probability of production Rule must be in the range 0 < prob <= 1.")
 
-@dataclass
+@dataclass(frozen=True)
 class PCFG:
     """
     Class to keep track of attributes for a 
@@ -64,27 +65,34 @@ class PCFG:
         These are allowed to be upper-case strings, or bracketed <> labels.
         Examples: "A", "B", "<A>", "<Noun>", "<Case1>", etc..  
         In regular expressions, a non-terminal symbol can be:
-        '<'[^>]+'>'
+        '<' [^>]+ '>'
         - **terminals (set(character)): The set of all terminal symbols in the grammar also derived from
         the production rule list.
         These are allowed to be any set of ASCII characters 
         (except upper-case and <> characters to prevent ambiguity), 
         In regular expressions, a terminal symbol can be:
-        [^<,>,'A-Z']  (exactly one occurrence)
+        [^A-Z,^<>]
     """
     starting_symbol: str
-    rules: dict[str, list[ProductionRule]]
+    rules: dict[str, set[ProductionRule]]
     epsilon: float = 0.0001
 
     def __post_init__(self):
         # Derive the set of Non-terminals and Terminals from the Production Rules
-        self.non_terminals = set(self.rules.keys())
-        
-        self.terminals = set()
+        # Make sure the data structures are immutable
+        object.__setattr__('non_terminals', frozenset(self.rules.keys()))
+
+        # temporary set to collect all terminal symbols
+        collect_terminals = set({})
         for rule_list in self.rules.values():
             for rule in rule_list:
                 for terminal in rule.prod_sequence:
                     # Determine if the symbol is a non-terminal symbol
                     if terminal not in self.non_terminals:
                         # If not, add it to the set
-                        self.terminals.add(terminal)
+                        collect_terminals.add(terminal)
+        
+        # Make sure the terminal set is immutable
+        object.__setattr__('terminals', frozenset(collect_terminals))
+        # Make the dictionary "read/view only"
+        object.__setattr__('rules', MappingProxyType(self.rules))
