@@ -7,14 +7,26 @@ and basic class internal methods
 (i.e. _str_, )
 """
 
-# Type aliases to store a Production Rule
-# consisting of an ordered pair of a sequence of strings (terminals/non-terminals)
-# and a designated probability assigned to that rule
-ProductionSequence = tuple[str, ...] # allows tuples of any length
-Rule = tuple[ProductionSequence, float]
+@dataclass(frozen=True)
+class ProductionRule:
+    """
+    Class to store a format for a single 
+    production rule, consisting of the Right Hand Side (RHS)
+    of the rule, and an assigned generating probability. 
+    Attributes:
+        - **prod_sequence (tuple[str, ...]): an arbitrary tuple/sequence of terminals and non-terminals
+        - **prob (float): The assigned probability of generating the production rule. Should be between 0 and 1
+    """
+    prod_sequence: tuple[str, ...]
+    prob: float
+
+    def __post_init__(self):
+        # Check that the probability is non-zero but not greater than one
+        if (self.prob < 0) or (self.prob >= 1):
+            raise ValueError("Error: Probability of production Rule must be in the range 0 < prob <= 1.")
 
 @dataclass
-class PCFG():
+class PCFG:
     """
     Class to keep track of attributes for a 
     Probablistic Context Free Grammar (PCFG):
@@ -22,20 +34,10 @@ class PCFG():
     This class serves as an conventional representation of a PCFG.
 
     Attributes:
-        - **non_terminals (set(string)): The set of all non-terminal symbols in the grammar.
-        These are allowed to be upper-case strings, or bracketed <> labels.
-        Examples: "A", "B", "<A>", "<Noun>", "<Case1>", etc..  
         - **starting_symbol (string): The value of the starting non-terminal symbol 
         in the grammar. Be sure to specify this value, otherwise, the 
         starting symbol will be selected as the first element of the 
         non-terminal symbols set upon construction.
-        - **terminals (set(character)): The set of all terminal symbols in the grammar.
-        These are allowed to be any set of ASCII characters 
-        (except upper-case and <> characters to prevent ambiguity), 
-        and can either be wrapped in quotes or quote-free.
-        Only a-z is allowed without quotes (i.e. aAb), but to use special 
-        characters (like [ or ], you must wrap them in quotes or 
-        double quotes) i.e. '('A')'. 
         multiple characters in the same string-quote for production rules as seen 
         as concatenated (sequential) together. For example, "ab"A is intepreted as 
         terminal symbols "a" and "b" appended before non-terminal symbol A, not as one
@@ -45,7 +47,7 @@ class PCFG():
             - production : A sequence of non-terminals/terminals of arbitrary length
             - probability : a float indicating the probability this rule is chosen on
             generation / sampling.
-        - **rules: (string, set( (production, probability) ))
+        - **rules: dict[str, ProductionRule]
         A dictionary with keys as non-terminal symbols and values consist of a set of
         ordered pairs dictating all possible production rules for a single non-terminal
         symbol. For example,  A --> "ab"A (0.25) | "bc"A"c" (0.75) would be stored as:
@@ -55,11 +57,34 @@ class PCFG():
         for a given non-terminal symbol sum to 1 +- epsilon. for example, if epsilon is 0.001, then
         A --> "ab"A (0.355) | "bc"A"c" (0.254) | "bb"A (0.35), then the probabilities sum to 0.999, 
         which is in the tolerable range 1 +- 0.001. 
+
+        Derived Attributes:
+        - **non_terminals (set(string)):
+        The set of all non-terminal symbols in the grammar derived from the production rule list.
+        These are allowed to be upper-case strings, or bracketed <> labels.
+        Examples: "A", "B", "<A>", "<Noun>", "<Case1>", etc..  
+        In regular expressions, a non-terminal symbol can be:
+        '<'[^>]+'>'
+        - **terminals (set(character)): The set of all terminal symbols in the grammar also derived from
+        the production rule list.
+        These are allowed to be any set of ASCII characters 
+        (except upper-case and <> characters to prevent ambiguity), 
+        In regular expressions, a terminal symbol can be:
+        [^<,>,'A-Z']  (exactly one occurrence)
     """
-
-    non_terminals: set[str]
     starting_symbol: str
-    terminals: set[str]
-    rules: dict[str, set[Rule]]
-    epsilon: float
+    rules: dict[str, list[ProductionRule]]
+    epsilon: float = 0.0001
 
+    def __post_init__(self):
+        # Derive the set of Non-terminals and Terminals from the Production Rules
+        self.non_terminals = set(self.rules.keys())
+        
+        self.terminals = set()
+        for rule_list in self.rules.values():
+            for rule in rule_list:
+                for terminal in rule.prod_sequence:
+                    # Determine if the symbol is a non-terminal symbol
+                    if terminal not in self.non_terminals:
+                        # If not, add it to the set
+                        self.terminals.add(terminal)
