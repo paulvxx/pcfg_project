@@ -103,8 +103,8 @@ class PCFGChecker():
                 nt_symbols_for_prod = set(prod_rule.prod_sequence).intersection(pcfg.non_terminals)
                 # add them to the list of non terminals found
                 non_terminals_found = non_terminals_found.union(nt_symbols_for_prod)
-                # also add to the list of non terminals that are reachable
-                reachable_non_terminals = reachable_non_terminals.union(non_terminals_found)
+            # also add the non termials found to the list of non terminals that are reachable
+            reachable_non_terminals = reachable_non_terminals.union(non_terminals_found)
 
             # Add the list of non_terminals to the stack,
             # but exclude already visited terminals:
