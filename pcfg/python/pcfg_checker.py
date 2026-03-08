@@ -103,6 +103,7 @@ class PCFGChecker():
                 nt_symbols_for_prod = set(prod_rule.prod_sequence).intersection(pcfg.non_terminals)
                 # add them to the list of non terminals found
                 non_terminals_found = non_terminals_found.union(nt_symbols_for_prod)
+            
             # also add the non termials found to the list of non terminals that are reachable
             reachable_non_terminals = reachable_non_terminals.union(non_terminals_found)
 
@@ -113,3 +114,49 @@ class PCFGChecker():
         
         # Return true if every non terminal can be reached
         return (reachable_non_terminals == pcfg.non_terminals)
+
+    @staticmethod
+    def no_infinite_loops(pcfg: PCFG):
+        """
+        This static method checks that there are no possible 
+        "infinite" loops within the PCFG and that every branch in a 
+        parse tree will eventually terminate.
+        Effectively, every non terminal symbol can "be" simplified into
+        a sequence of terminal symbols by some finite number of production
+        rule applications
+        Parameters:
+            - pcfg: A probablistic context-free grammar (PCFG)
+        Returns:
+            - True if the PCFG contains no "infinite" recursion.
+        """
+        # get the set of all symbols in the PCFG
+        all_symbols = (pcfg.terminals).union(pcfg.non_terminals)
+        # record the set of all symbols that simplify into non-terminals
+        terminating_path_symbols = set(pcfg.terminals)
+        # variable to indicate whether any new non terminal
+        # symbols can be added (to start the loop)
+        new_symbols_to_add = True
+
+        # Loop to find non terminal symbols that simplify into terminal sequences
+        while new_symbols_to_add:
+            # set to false at start of each iteration
+            new_symbols_to_add = False
+
+            # iterate through all non terminal symbols
+            for non_terminal in pcfg.non_terminals:
+                # no need to double examine a non terminal symbol that can be simplified
+                if non_terminal in terminating_path_symbols:
+                    continue
+
+                for rule in pcfg.rules[non_terminal]:
+                    symbol_set = set(rule.prod_sequence)
+                    # The rule simplifies 
+                    if symbol_set.issubset(terminating_path_symbols):
+                        new_symbols_to_add = True
+                        terminating_path_symbols.add(non_terminal)
+                        # no need to check the rest of the production rules
+                        break
+
+        # All non terminals should have a terminating path (True) or (False) if not
+        return (terminating_path_symbols == all_symbols)    
+        
