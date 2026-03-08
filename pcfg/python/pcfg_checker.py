@@ -123,7 +123,10 @@ class PCFGChecker():
         parse tree will eventually terminate.
         Effectively, every non terminal symbol can "be" simplified into
         a sequence of terminal symbols by some finite number of production
-        rule applications
+        rule applications.
+        Note: epsilon ("") production rules are treated as an empty tuple.
+        Empty strings in sequences (i.e. ("a", "", "b")) should be ommitted to
+        exclude them (i.e. ("a", "b"))
         Parameters:
             - pcfg: A probablistic context-free grammar (PCFG)
         Returns:
