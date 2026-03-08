@@ -22,6 +22,9 @@ class ProductionRule:
     prob: float
 
     def __post_init__(self):
+        # disallow empty strings in production rules
+        if '' in set(self.prod_sequence):
+            raise Exception("Empty string \"\" is not allowed in production rules")
         # Check that the probability is non-zero but not greater than one
         if (self.prob <= 0) or (self.prob > 1):
             raise ValueError("Error: Probability of production Rule must be in the range 0 < prob <= 1.")
@@ -91,7 +94,7 @@ class PCFG:
                 for terminal in rule.prod_sequence:
                     # Determine if the symbol is a non-terminal symbol
                     # or empty string
-                    if terminal not in self.non_terminals and terminal != '':
+                    if terminal not in self.non_terminals:
                         # If not, add it to the set
                         collect_terminals.add(terminal)
         
