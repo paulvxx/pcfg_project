@@ -32,7 +32,7 @@ class PCFGChecker():
         """
 
         for non_terminal in pcfg.non_terminals:
-            if re.fullmatch('<[^<>]>', non_terminal) is None:
+            if re.fullmatch('<[^<>]+>', non_terminal) is None:
                 raise Exception(f"Non-terminal symbol : {non_terminal} does not match the expected regular expression : <[^<>]>")
         for terminal in pcfg.terminals:
             if re.fullmatch('[^A-Z<>]', terminal) is None:

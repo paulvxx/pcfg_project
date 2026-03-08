@@ -23,7 +23,7 @@ class ProductionRule:
 
     def __post_init__(self):
         # Check that the probability is non-zero but not greater than one
-        if (self.prob <= 0) or (self.prob >= 1):
+        if (self.prob <= 0) or (self.prob > 1):
             raise ValueError("Error: Probability of production Rule must be in the range 0 < prob <= 1.")
 
 @dataclass(frozen=True)
