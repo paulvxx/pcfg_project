@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field, InitVar
 from types import MappingProxyType
 
 """
@@ -76,11 +76,13 @@ class PCFG:
     starting_symbol: str
     rules: dict[str, set[ProductionRule]]
     epsilon: float = 0.0001
+    non_terminals: set[str] = field(init=False, repr=True)
+    terminals: set[str] = field(init=False, repr=True)
 
     def __post_init__(self):
         # Derive the set of Non-terminals and Terminals from the Production Rules
         # Make sure the data structures are immutable
-        object.__setattr__('non_terminals', frozenset(self.rules.keys()))
+        object.__setattr__(self, 'non_terminals', frozenset(self.rules.keys()))
 
         # temporary set to collect all terminal symbols
         collect_terminals = set({})
@@ -88,11 +90,12 @@ class PCFG:
             for rule in rule_list:
                 for terminal in rule.prod_sequence:
                     # Determine if the symbol is a non-terminal symbol
-                    if terminal not in self.non_terminals:
+                    # or empty string
+                    if terminal not in self.non_terminals and terminal != '':
                         # If not, add it to the set
                         collect_terminals.add(terminal)
         
         # Make sure the terminal set is immutable
-        object.__setattr__('terminals', frozenset(collect_terminals))
+        object.__setattr__(self, 'terminals', frozenset(collect_terminals))
         # Make the dictionary "read/view only"
-        object.__setattr__('rules', MappingProxyType(self.rules))
+        object.__setattr__(self, 'rules', MappingProxyType(self.rules))

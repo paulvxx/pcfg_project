@@ -1,5 +1,5 @@
 import re
-from pcfg_project.pcfg.python.pcfg_class import ProductionRule, PCFG
+from pcfg.python.pcfg_class import ProductionRule, PCFG
 
 class PCFGChecker():
     """
@@ -30,16 +30,17 @@ class PCFGChecker():
             applied regex pattern
             - Raises an Exception otherwise
         """
+
         for non_terminal in pcfg.non_terminals:
             if re.fullmatch('<[^<>]>', non_terminal) is None:
                 raise Exception(f"Non-terminal symbol : {non_terminal} does not match the expected regular expression : <[^<>]>")
-        for terminal in pcfg.non_terminals:
+        for terminal in pcfg.terminals:
             if re.fullmatch('[^A-Z<>]', terminal) is None:
                 raise Exception(f"Terminal symbol : {terminal} does not match the expected regular expression : [^A-Z<>]")
         return True
 
     @staticmethod
-    def symbols_follow_regex(pcfg: PCFG):
+    def production_probabilities_sum_to_one(pcfg: PCFG):
         """
         This static method checks that the sum of probabilities for the 
         set of all production rules for all non-terminal symbols sums to 1, plus or minus
@@ -66,3 +67,49 @@ class PCFGChecker():
         
         # All probability checks passed
         return True
+
+    @staticmethod
+    def all_nonterminals_reachable(pcfg: PCFG):
+        """
+        This static method checks that all non-terminal symbols in the 
+        grammar are reachable from the starting non-terminal symbol.
+
+        Parameters:
+            - pcfg: A probablistic context-free grammar (PCFG)
+        Returns:
+            - True if all the PCFG's non-terminal symbols are reachable
+            from the start symbol, False otherwise
+        """
+
+        # make a set to track non terminal symbols visited
+        visited_non_terminals = set({})
+
+        # make a set to track non terminal symbols that can be reached 
+        # from the starting non terminal
+        reachable_non_terminals = set({})
+        # Add the starting symbol to the list
+        reachable_non_terminals.add(pcfg.starting_symbol)
+
+        # Create a stack structure using a list
+        stack = [pcfg.starting_symbol]
+
+        while (reachable_non_terminals != pcfg.non_terminals and len(stack) != 0):
+            nt = stack.pop()
+            visited_non_terminals.add(nt)
+            # Make a list of non terminals to add to the stack
+            non_terminals_found = set({})
+            for prod_rule in pcfg.rules[nt]:
+                # filter out all non terminals
+                nt_symbols_for_prod = set(prod_rule.prod_sequence).intersection(pcfg.non_terminals)
+                # add them to the list of non terminals found
+                non_terminals_found = non_terminals_found.union(nt_symbols_for_prod)
+                # also add to the list of non terminals that are reachable
+                reachable_non_terminals = reachable_non_terminals.union(non_terminals_found)
+
+            # Add the list of non_terminals to the stack,
+            # but exclude already visited terminals:
+            non_terminals_found = non_terminals_found.difference(visited_non_terminals)
+            stack += list(non_terminals_found)
+        
+        # Return true if every non terminal can be reached
+        return (reachable_non_terminals == pcfg.non_terminals)
