@@ -87,6 +87,10 @@ class PCFG:
         # Make sure the data structures are immutable
         object.__setattr__(self, 'non_terminals', frozenset(self.rules.keys()))
 
+        # raise an error if the start symbol is not in the non_terminal set:
+        if self.starting_symbol not in self.non_terminals:
+            raise KeyError("Error: Starting Symbol not found in Rule dictionary.")
+
         # temporary set to collect all terminal symbols
         collect_terminals = set({})
         for rule_list in self.rules.values():

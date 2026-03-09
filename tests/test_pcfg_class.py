@@ -1,11 +1,12 @@
 import pytest
-from pcfg.python.pcfg_class import ProductionRule, PCFG
+from ..pcfg.python.pcfg_class import ProductionRule, PCFG
 from .prod_class_cases import INVALID_PROD_RULE_CASES
 from .prod_class_cases import VALID_PROD_RULE_CASES
+from .prod_class_cases import PCFG_CASES
 
 class TestProductionRuleInit:
 
-    @pytest.mark.parametrize("seq", "prob", "etype", "msg", INVALID_PROD_RULE_CASES)
+    @pytest.mark.parametrize("seq, prob, etype, msg", INVALID_PROD_RULE_CASES)
     def test_invalid_test_cases_prod_class(self, seq, prob, etype, msg):
         """
         Verifies the ProductionRule raises the appropriate Exceptions / Errors
@@ -15,7 +16,7 @@ class TestProductionRuleInit:
         with pytest.raises(etype, match=msg):
             ProductionRule(seq, prob)
     
-    @pytest.mark.parametrize("seq", "prob", VALID_PROD_RULE_CASES)
+    @pytest.mark.parametrize("seq, prob", VALID_PROD_RULE_CASES)
     def test_valid_test_cases_prod_class(self, seq, prob):
         """
         Verifies the ProductionRule is configured correctly with the
@@ -25,3 +26,29 @@ class TestProductionRuleInit:
         assert prod.prod_sequence == seq
         assert prod.prob == prob
 
+    @pytest.mark.parametrize("start_symbol, rules, expected, exception", PCFG_CASES)
+    def test_pcfg_cases(self, start_symbol, rules, expected, exception):
+        """
+        Verifies the PCFG class is configured / raises errors correctly
+        """
+        # Validate normal test cases
+        if exception is None:
+            # Convert the list of rules (values) into Type ProductionRule
+            prod_rules = dict({})
+            # Iterate over key and value:
+            for key, value in rules.items():
+                new_prod_list = set({})
+                for p in value:
+                    new_prod_list.add(ProductionRule(p[0], p[1]))
+                # update the new change
+                prod_rules[key] = new_prod_list
+
+            pcfg = PCFG(start_symbol, prod_rules)
+            assert pcfg.non_terminals == expected["non_terminals"]
+            assert pcfg.terminals == expected["terminals"]
+            assert pcfg.rules == prod_rules
+        # Else check for proper Exception (Key Error)
+        else:
+            with pytest.raises(exception["etype"], match=exception["msg"]):
+                PCFG(start_symbol, rules)
+        
