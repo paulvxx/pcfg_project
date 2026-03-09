@@ -1,3 +1,5 @@
+from ..pcfg.python.pcfg_class import ProductionRule
+
 ## Python file containing test cases for the production and PCFG class
 
 # Invalid test cases for Prod class
@@ -27,7 +29,7 @@ PCFG_CASES = [
     (
         "unknown",
         {
-            "<A>": set({(("a", "<A>"), 0.25), (("b"), 0.25), ((), 0.5)})
+            "<A>": set({ProductionRule(("a", "<A>"), 0.25), ProductionRule(("b"), 0.25), ProductionRule((), 0.5)})
         },
         None, # no need for this test case
         {
@@ -39,7 +41,7 @@ PCFG_CASES = [
     (
         "<A>",
         {
-            "<A>": set({(("a", "<A>"), 0.25), (("b"), 0.25), ((), 0.5)})
+            "<A>": set({ProductionRule(("a", "<A>"), 0.25), ProductionRule(("b"), 0.25), ProductionRule((), 0.5)})
         },
         {
             "non_terminals": set({"<A>"}),
@@ -50,8 +52,9 @@ PCFG_CASES = [
     (
         "<A>",
         {
-            "<A>": set({(("a", "a", "<B>"), 0.1), (("c", "c", "<A>"), 0.2), (("b", "c", "<A>", "a"), 0.3), ((), 0.4)}),
-            "<B>": set({(("b", "<B>"), 0.6), (("b"), 0.4)})
+            "<A>": set({ProductionRule(("a", "a", "<B>"), 0.1), ProductionRule(("c", "c", "<A>"), 0.2), 
+                        ProductionRule(("b", "c", "<A>", "a"), 0.3), ProductionRule((), 0.4)}),
+            "<B>": set({ProductionRule(("b", "<B>"), 0.6), ProductionRule(("b"), 0.4)})
         },
         {
             "non_terminals": set({"<A>", "<B>"}),
