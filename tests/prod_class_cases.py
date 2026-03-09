@@ -37,6 +37,23 @@ PCFG_CASES = [
             "msg": "Error: Starting Symbol not found in Rule dictionary."
         }
     ),
+
+    # Test case detecting Type Instance Error 
+    (
+        "<A>",
+        {
+            "<A>": set({ProductionRule(("a", "<A>"), 0.25), (("a", "<A>"), 0.25), ProductionRule(("b"), 0.25), ProductionRule((), 0.5)})
+        },
+        {
+            "non_terminals": set({"<A>"}),
+            "terminals": set({"a", "b"}),
+        },
+        {
+            "etype": TypeError,
+            "msg": "All rules must be instances of ProductionRule."           
+        }
+    ),
+
     # Next two test cases should not raise errors
     (
         "<A>",
@@ -49,6 +66,7 @@ PCFG_CASES = [
         },
         None
     ),
+
     (
         "<A>",
         {

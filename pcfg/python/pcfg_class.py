@@ -95,6 +95,8 @@ class PCFG:
         collect_terminals = set({})
         for rule_list in self.rules.values():
             for rule in rule_list:
+                if not isinstance(rule, ProductionRule):
+                    raise TypeError("All rules must be instances of ProductionRule.")
                 for terminal in rule.prod_sequence:
                     # Determine if the symbol is a non-terminal symbol
                     # or empty string

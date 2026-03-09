@@ -33,20 +33,10 @@ class TestProductionRuleInit:
         """
         # Validate normal test cases
         if exception is None:
-            # Convert the list of rules (values) into Type ProductionRule
-            prod_rules = dict({})
-            # Iterate over key and value:
-            for key, value in rules.items():
-                new_prod_list = set({})
-                for p in value:
-                    new_prod_list.add(ProductionRule(p[0], p[1]))
-                # update the new change
-                prod_rules[key] = new_prod_list
-
-            pcfg = PCFG(start_symbol, prod_rules)
+            pcfg = PCFG(start_symbol, rules)
             assert pcfg.non_terminals == expected["non_terminals"]
             assert pcfg.terminals == expected["terminals"]
-            assert pcfg.rules == prod_rules
+            assert pcfg.rules == rules
         # Else check for proper Exception (Key Error)
         else:
             with pytest.raises(exception["etype"], match=exception["msg"]):
