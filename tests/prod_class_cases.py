@@ -42,7 +42,7 @@ PCFG_CASES = [
     (
         "<A>",
         {
-            "<A>": set({ProductionRule(("a", "<A>"), 0.25), (("a", "<A>"), 0.25), ProductionRule(("b"), 0.25), ProductionRule((), 0.5)})
+            "<A>": set({ProductionRule(("a", "<A>"), 0.25), (("a", "<A>"), 0.25), ProductionRule(("b",), 0.25), ProductionRule((), 0.5)})
         },
         {
             "non_terminals": set({"<A>"}),
@@ -58,7 +58,7 @@ PCFG_CASES = [
     (
         "<A>",
         {
-            "<A>": set({ProductionRule(("a", "<A>"), 0.25), ProductionRule(("b"), 0.25), ProductionRule((), 0.5)})
+            "<A>": set({ProductionRule(("a", "<A>"), 0.25), ProductionRule(("b",), 0.25), ProductionRule((), 0.5)})
         },
         {
             "non_terminals": set({"<A>"}),
@@ -72,7 +72,7 @@ PCFG_CASES = [
         {
             "<A>": set({ProductionRule(("a", "a", "<B>"), 0.1), ProductionRule(("c", "c", "<A>"), 0.2), 
                         ProductionRule(("b", "c", "<A>", "a"), 0.3), ProductionRule((), 0.4)}),
-            "<B>": set({ProductionRule(("b", "<B>"), 0.6), ProductionRule(("b"), 0.4)})
+            "<B>": set({ProductionRule(("b", "<B>"), 0.6), ProductionRule(("b",), 0.4)})
         },
         {
             "non_terminals": set({"<A>", "<B>"}),
