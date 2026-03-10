@@ -1,4 +1,5 @@
 import pytest
+import re
 from ..pcfg.python.pcfg_class import ProductionRule, PCFG
 from .prod_class_cases import INVALID_PROD_RULE_CASES
 from .prod_class_cases import VALID_PROD_RULE_CASES
@@ -13,7 +14,7 @@ class TestProductionRuleInit:
         for invalid input
         """
         # Ensure we raise the appropriate exception
-        with pytest.raises(etype, match=msg):
+        with pytest.raises(etype, match=re.escape(msg)):
             ProductionRule(seq, prob)
     
     @pytest.mark.parametrize("seq, prob", VALID_PROD_RULE_CASES)
@@ -39,6 +40,6 @@ class TestProductionRuleInit:
             assert pcfg.rules == rules
         # Else check for proper Exception (Key Error)
         else:
-            with pytest.raises(exception["etype"], match=exception["msg"]):
+            with pytest.raises(exception["etype"], match=re.escape(exception["msg"])):
                 PCFG(start_symbol, rules)
-        
+    

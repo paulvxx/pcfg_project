@@ -1,5 +1,5 @@
 import re
-from pcfg.python.pcfg_class import ProductionRule, PCFG
+from .pcfg_class import ProductionRule, PCFG
 
 class PCFGChecker():
     """
