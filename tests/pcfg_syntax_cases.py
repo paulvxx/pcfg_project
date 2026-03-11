@@ -46,7 +46,7 @@ REGEX_TEST_CASES = [
             }
         },
         Exception,
-        "Non-terminal symbol : <B>C> does not match the expected regular expression : <[^<>]>"
+        "Non-terminal symbol :  does not match the expected regular expression : <[^<>]>"
     ),
     # NON-ACCEPTING CASES (TERMINALS)
     (

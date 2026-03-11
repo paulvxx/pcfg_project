@@ -72,11 +72,12 @@ PCFG_CASES = [
         {
             "<A>": set({ProductionRule(("a", "a", "<B>"), 0.1), ProductionRule(("c", "c", "<A>"), 0.2), 
                         ProductionRule(("b", "c", "<A>", "a"), 0.3), ProductionRule((), 0.4)}),
-            "<B>": set({ProductionRule(("b", "<B>"), 0.6), ProductionRule(("b",), 0.4)})
+            "<B>": set({ProductionRule(("b", "<B>"), 0.4), ProductionRule(("b",), 0.3), ProductionRule(("c", "<C>", "c"), 0.3)}),
+            "<C>": set({ProductionRule(("a", "d", "<A>"), 0.8), ProductionRule((), 0.2)})
         },
         {
-            "non_terminals": set({"<A>", "<B>"}),
-            "terminals": set({"a", "b", "c"}),
+            "non_terminals": set({"<A>", "<B>", "<C>"}),
+            "terminals": set({"a", "b", "c", "d"}),
         },
         None
     ),
