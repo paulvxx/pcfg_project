@@ -8,7 +8,7 @@ REGEX_TEST_CASES = [
         {
             "starting_symbol": "<A>",
             "rules": {
-                "<A>": set({ProductionRule(("a", "<A>"), 0.4), ProductionRule(("b", "<>>", "c"), 0.3), ProductionRule(("b"), 0.3)}),
+                "<A>": set({ProductionRule(("a", "<A>"), 0.4), ProductionRule(("b", "<>>", "c"), 0.3), ProductionRule(("b",), 0.3)}),
                 "<>>": set({ProductionRule(("b", "<>>"), 0.3), ProductionRule(("a", "c"), 0.7)})
             }
         },
@@ -20,7 +20,7 @@ REGEX_TEST_CASES = [
             "starting_symbol": "<A>",
             "rules": {
                 "<A>": set({ProductionRule(("a", "<A>"), 0.4), ProductionRule(("b", "<Sym>>", "c"), 0.6)}),
-                "<Sym>>": set({ProductionRule(("a", "b", "c"), 0.3), ProductionRule((""), 0.7)})
+                "<Sym>>": set({ProductionRule(("a", "b", "c"), 0.3), ProductionRule((), 0.7)})
             }
         },
         Exception,
@@ -30,8 +30,8 @@ REGEX_TEST_CASES = [
         {
             "starting_symbol": "<A>",
             "rules": {
-                "<A>": set({ProductionRule(("a", "b", "<A>"), 0.1), ProductionRule(("b", "<B>C>"), 0.1), ProductionRule(("c"), 0.8)}),
-                "<B>C>": set({ProductionRule(("b", "b", "<B>C>"), 0.5), ProductionRule((""), 0.5)})
+                "<A>": set({ProductionRule(("a", "b", "<A>"), 0.1), ProductionRule(("b", "<B>C>"), 0.1), ProductionRule(("c",), 0.8)}),
+                "<B>C>": set({ProductionRule(("b", "b", "<B>C>"), 0.5), ProductionRule((), 0.5)})
             }
         },
         Exception,
@@ -39,10 +39,10 @@ REGEX_TEST_CASES = [
     ),
     (
         {
-            "starting_symbol": " ",
+            "starting_symbol": "",
             "rules": {
-                " ": set({ProductionRule(("a", "<A>"), 0.6), ProductionRule(("b", "b"), 0.4)}),
-                "<A>": set({ProductionRule(("c", "b", "a"), 0.5), ProductionRule(("c"), 0.5)})
+                "": set({ProductionRule(("a", "<A>"), 0.6), ProductionRule(("b", "b"), 0.4)}),
+                "<A>": set({ProductionRule(("c", "b", "a"), 0.5), ProductionRule(("c",), 0.5)})
             }
         },
         Exception,
@@ -64,8 +64,8 @@ REGEX_TEST_CASES = [
         {
             "starting_symbol": "<A>",
             "rules": {
-                "<A>":set({ProductionRule(("a", "b"), 0.4), ProductionRule(("<B>"), 0.6)}),
-                "<B>":set({ProductionRule(("bad", "d"), 0.3),  ProductionRule(("a", "b", "<A>"), 0.3), ProductionRule((""), 0.4)})
+                "<A>":set({ProductionRule(("a", "b"), 0.4), ProductionRule(("<B>",), 0.6)}),
+                "<B>":set({ProductionRule(("bad", "d"), 0.3),  ProductionRule(("a", "b", "<A>"), 0.3), ProductionRule((), 0.4)})
             }
         },
         Exception,
@@ -83,6 +83,6 @@ REGEX_TEST_CASES = [
         "Terminal symbol : <C> does not match the expected regular expression : [^A-Z<>]"
     )
 
-    # ACCEPTING CASES (TERMINAL)
-    
+    # ACCEPTING CASES
+
 ]
