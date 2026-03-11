@@ -9,7 +9,8 @@ INVALID_PROD_RULE_CASES = [
     # negative probability not allowed
     (("a", "<A>", "a"), -0.1, ValueError, "Error: Probability of production Rule must be in the range 0 < prob <= 1."), 
     # zero probability not allowed
-    (("a", "b"), 0, ValueError, "Error: Probability of production Rule must be in the range 0 < prob <= 1."), 
+    (("a", "b"), 0, ValueError, "Error: Probability of production Rule must be in the range 0 < prob <= 1."),
+    (("a",), 0.0, ValueError, "Error: Probability of production Rule must be in the range 0 < prob <= 1."),
     # probabiltiy greater than one not allowed
     (("a", "b"), 1.10, ValueError, "Error: Probability of production Rule must be in the range 0 < prob <= 1.") 
 ]
