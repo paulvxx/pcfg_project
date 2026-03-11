@@ -16,5 +16,7 @@ class TestSyntaxCases:
 
         pcfg = PCFG(grammar["starting_symbol"], grammar["rules"])
         # Ensure we raise the appropriate exception
+        print(msg)
         with pytest.raises(etype, match=re.escape(msg)):
             PCFGChecker.symbols_follow_regex(pcfg)
+
